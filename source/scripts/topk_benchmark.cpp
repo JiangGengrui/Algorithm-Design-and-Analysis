@@ -143,8 +143,10 @@ vector<int> topK_heap(const vector<vector<double>>& users, const vector<double>&
 // 记录csv结果
 void write_csv(const string& fname, const string& algoname, int n, int k, double ms) {
     ofstream fout(fname, ios::app);
-    if (fout.tellp() == 0) // 如果csv为空需写表头
-        fout << "algorithm,n,k,time_ms\n";
+    if (!fout.is_open()) {
+        cerr << "Error: Cannot open file " << fname << " for writing!" << endl;
+        return;
+    }
     fout << algoname << "," << n << "," << k << "," << ms << "\n";
     fout.close();
 }
@@ -152,12 +154,23 @@ void write_csv(const string& fname, const string& algoname, int n, int k, double
 int main(){
     srand(time(0));
     // ====== 实验参数区 ======
-    vector<int> N_list = {100000, 500000, 1000000, 5000000, 10000000}; // 可增大
+    vector<int> N_list = {100000, 500000, 1000000, 2000000, 3000000, 4000000, 5000000, 8000000, 10000000}; // 可增大
     int k = 10;
-    string csv_file = "topk_benchmark.csv";
+    string csv_file = "d:\\code\\Algorithm-Design-and-Analysis\\source\\data\\topk_benchmark.csv";
 
-    // 清空csv文件
-    ofstream fout(csv_file, ios::trunc); fout.close();
+    // 删除旧文件（如果存在）并创建新文件
+    remove(csv_file.c_str());
+    {
+        ofstream fout(csv_file);
+        if (fout.is_open()) {
+            fout << "algorithm,n,k,time_ms\n";
+            fout.close();
+        } else {
+            cerr << "Error: Cannot create file " << csv_file << endl;
+            cerr << "Please check if the file is open in another program." << endl;
+            return 1;
+        }
+    }
 
     for (int n : N_list) {
         cout << "==== n = " << n << " ====" << endl;

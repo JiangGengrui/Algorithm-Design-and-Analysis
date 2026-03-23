@@ -105,8 +105,10 @@ vector<int> origin_quicksort(const vector<vector<double>>& users, const vector<d
 // ==== CSV写入 ====
 void write_csv(const string& fname, const string& algoname, int n, int k, double ms) {
     ofstream fout(fname, ios::app);
-    if (fout.tellp() == 0)
-        fout << "algorithm,n,k,time_ms\n";
+    if (!fout.is_open()) {
+        cerr << "Error: Cannot open file " << fname << " for writing!" << endl;
+        return;
+    }
     fout << algoname << "," << n << "," << k << "," << ms << "\n";
     fout.close();
 }
@@ -114,10 +116,22 @@ void write_csv(const string& fname, const string& algoname, int n, int k, double
 int main() {
     srand(time(0));
     // ====== 实验参数区 =====
-    vector<int> N_list = {10000, 20000, 50000, 100000}; // 可改更大
+    vector<int> N_list = {10000, 50000, 100000, 500000, 1000000}; // 可改更大
     int k = 10;
-    string csv_file = "original_fullsort_benchmark.csv";
-    ofstream fout(csv_file, ios::trunc); fout.close(); // 清空csv
+    string csv_file = "d:\\code\\Algorithm-Design-and-Analysis\\source\\data\\original_fullsort_benchmark.csv";
+    // 删除旧文件（如果存在）并创建新文件
+    remove(csv_file.c_str());
+    {
+        ofstream fout(csv_file);
+        if (fout.is_open()) {
+            fout << "algorithm,n,k,time_ms\n";
+            fout.close();
+        } else {
+            cerr << "Error: Cannot create file " << csv_file << endl;
+            cerr << "Please check if the file is open in another program." << endl;
+            return 1;
+        }
+    }
 
     for (int n : N_list) {
         cout << "\n==== n = " << n << " ====\n";
