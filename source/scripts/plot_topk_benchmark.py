@@ -32,13 +32,13 @@ def load_data(csv_path="source/data/topk_benchmark.csv"):
     n_to_idx = {n: idx for idx, n in enumerate(n_actual_all)}
     df['n_idx'] = df['n'].map(n_to_idx)
 
-    print("\n✅ 数据加载完成，实验参数：")
+    print("\n数据加载完成，实验参数：")
     print(f"固定Top-K值 k = {k_fixed}")
     print(f"实测数据规模n：{n_actual_all}")
     print(f"算法列表：{df['algorithm'].unique().tolist()}")
     return df, n_actual_all, n_to_idx, k_fixed
 
-# ===================== 【核心修改】完全按你的规则计算理论曲线 =====================
+# ===================== 计算理论曲线 =====================
 def get_algo_info(algo_name, df, n_actual_all, k_fixed):
     # 取第一个点作为基准
     n0 = n_actual_all[0]
@@ -46,7 +46,7 @@ def get_algo_info(algo_name, df, n_actual_all, k_fixed):
     log_k = np.log2(k_fixed)
 
     if algo_name == "MinHeap_TopK":
-        # 你的公式：c = t0 / (n0 * logk)
+        # 公式：c = t0 / (n0 * logk)
         c = t0 / (n0 * log_k)
         formula = rf'$T = c \cdot n\log_2 k$, k={k_fixed}'
         o_name = r'O($n\log k$)'
@@ -54,7 +54,7 @@ def get_algo_info(algo_name, df, n_actual_all, k_fixed):
             return c * n * log_k
 
     else:
-        # 你的公式：c = t0 / n0
+        # 公式：c = t0 / n0
         c = t0 / n0
         formula = r'$T = c \cdot n$'
         o_name = r'O($n$)'
@@ -63,7 +63,7 @@ def get_algo_info(algo_name, df, n_actual_all, k_fixed):
 
     return f"{formula} {o_name}", calc_theory
 
-# ===================== 2. 单个算法绘图（理论曲线完全按你的规则） =====================
+# ===================== 2. 单个算法绘图 =====================
 def plot_algo(algo_name, df, n_actual_all, n_to_idx, k_fixed, save_dir):
     algo_data = df[df['algorithm'] == algo_name].copy()
     n_idx_actual = algo_data['n_idx'].values
@@ -71,7 +71,7 @@ def plot_algo(algo_name, df, n_actual_all, n_to_idx, k_fixed, save_dir):
 
     complexity_formula, calc_theory = get_algo_info(algo_name, df, n_actual_all, k_fixed)
 
-    # 平滑理论曲线 + 横坐标严格对齐
+    # 平滑理论曲线, 横坐标对齐
     n_smooth = np.linspace(min(n_actual_all), max(n_actual_all), 500)
     t_theory = calc_theory(n_smooth)
     x_theory = np.interp(n_smooth, n_actual_all, list(n_to_idx.values()))
@@ -91,7 +91,7 @@ def plot_algo(algo_name, df, n_actual_all, n_to_idx, k_fixed, save_dir):
     save_path = os.path.join(save_dir, f"{algo_name}_topk.png")
     plt.savefig(save_path, bbox_inches='tight')
     plt.close()
-    print(f"✅ 已保存：{save_path}")
+    print(f"已保存：{save_path}")
 
 # ===================== 3. 多算法对比图 =====================
 def plot_all_algos(df, n_actual_all, n_to_idx, k_fixed, save_dir):
@@ -120,7 +120,7 @@ def plot_all_algos(df, n_actual_all, n_to_idx, k_fixed, save_dir):
     save_path = os.path.join(save_dir, f"All_TopK.png")
     plt.savefig(save_path, bbox_inches='tight')
     plt.close()
-    print(f"✅ 已保存：{save_path}")
+    print(f"已保存：{save_path}")
 
 # ===================== 主函数 =====================
 if __name__ == "__main__":
@@ -131,4 +131,4 @@ if __name__ == "__main__":
         plot_algo(algo, df, n_actual_all, n_to_idx, k_fixed, save_dir)
     print("\n📊 绘制多算法对比图...")
     plot_all_algos(df, n_actual_all, n_to_idx, k_fixed, save_dir)
-    print(f"\n🎉 全部完成！理论曲线 100% 按你的规则计算！")
+    print(f"\n理论曲线绘制完成,已保存到：{os.path.abspath(save_dir)}")

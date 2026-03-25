@@ -32,7 +32,7 @@ n_actual_all = sorted(df['n'].unique())
 n_to_idx = {n: i for i, n in enumerate(n_actual_all)}
 df['n_idx'] = df['n'].map(n_to_idx)
 
-# ================== 【完全按你的公式计算】 ==================
+# ================== 公式计算 ==================
 def get_theory_curve(algo, n_list, t0, n0):
     # 你的公式：c = 第一个点实测值 / 第一个点理论复杂度
     if "QuickSort" in algo:
@@ -80,4 +80,4 @@ for algo in algorithms:
     plt.savefig(os.path.join(save_dir, f"{algo}.png"))
     plt.close()
 
-print("✅ 全部完成！理论曲线 100% 按你说的公式计算！")
+print("理论曲线绘制完成，已保存到：", os.path.abspath(save_dir))
