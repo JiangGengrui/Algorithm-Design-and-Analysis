@@ -90,15 +90,49 @@ vector<int> origin_selectionsort(const vector<vector<double>>& users, const vect
     return res;
 }
 
-// ==== 原始快排（标准sort） ====
+// ==== 手写快速排序（降序） ====
+int partition(vector<pair<double, int>>& arr, int left, int right) {
+    double pivot = arr[left].first;  // 选第一个为基准
+    int i = left, j = right;
+
+    while (i < j) {
+        // 从右往左找比pivot大的
+        while (i < j && arr[j].first <= pivot) j--;
+        arr[i] = arr[j];
+
+        // 从左往右找比pivot小的
+        while (i < j && arr[i].first >= pivot) i++;
+        arr[j] = arr[i];
+    }
+
+    arr[i].first = pivot;
+    return i;
+}
+
+void quicksort(vector<pair<double, int>>& arr, int left, int right) {
+    if (left >= right) return;
+
+    int pivot = partition(arr, left, right);
+
+    quicksort(arr, left, pivot - 1);
+    quicksort(arr, pivot + 1, right);
+}
+
+// ==== 原始快排 ====
 vector<int> origin_quicksort(const vector<vector<double>>& users, const vector<double>& target, int k) {
     int n = users.size();
     vector<pair<double, int>> sims(n);
+
     for (int i = 0; i < n; ++i)
         sims[i] = {cosineSimilarity(users[i], target), i};
-    sort(sims.begin(), sims.end(), std::greater<pair<double, int>>());
+
+    // 手写快排（降序）
+    quicksort(sims, 0, n - 1);
+
     vector<int> res;
-    for (int i = 0; i < k; ++i) res.push_back(sims[i].second);
+    for (int i = 0; i < k; ++i)
+        res.push_back(sims[i].second);
+
     return res;
 }
 
@@ -164,7 +198,7 @@ int main() {
         cout << "Origin_SelectionSort_Full: " << sel_ms << " ms" << endl;
         write_csv(csv_file, "Origin_SelectionSort_Full", n, k, sel_ms);
 
-        // 快排（STL sort）
+        // 快排
         t1 = high_resolution_clock::now();
         auto res4 = origin_quicksort(users, target, k);
         t2 = high_resolution_clock::now();
