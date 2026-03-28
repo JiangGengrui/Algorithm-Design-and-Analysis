@@ -76,5 +76,4 @@ python source/scripts/plot_topk_benchmark.py
 
 1. 原始全排序算法在小规模数据下表现尚可，但随着数据规模增长，O(n²)算法性能急剧下降
 2. Top-K优化显著提升了算法性能，尤其是数据规模较大时
-3. 在Top-K问题中，小顶堆和QuickSelect表现最优
-4. Top-K优化将复杂度从O(n²)优化到O(n log k)，性能提升明显
+3. Top-K优化将复杂度从O(n²)优化到O(n log k)，性能提升明显

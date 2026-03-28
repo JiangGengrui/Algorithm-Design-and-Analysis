@@ -12,6 +12,8 @@ using namespace std;
 using namespace chrono;
 
 const int DIM = 50;
+const int FIXED_N = 10000;  // 固定用户数 n=10000
+const int REPEAT = 20;      // 重复测试20次取平均
 
 // 内联优化：余弦相似度
 inline double cosineSimilarity(const vector<double>& a, const vector<double>& b) {
@@ -172,16 +174,13 @@ void write_csv(const string& fname, const string& algoname, int n, int k, double
     fout << algoname << "," << n << "," << k << "," << ms << "\n";
 }
 
-// ==================== 主函数（全算法 + 20次平均）====================
+// ==================== 主函数（固定n=10000，测试多组k）====================
 int main() {
     srand(time(0));
 
-    vector<int> N_list = {100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 
-        1000000, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000, 4500000, 5000000, 5500000,
-        6000000, 6500000, 7000000, 7500000, 8000000, 8500000, 9000000, 9500000, 10000000};
-    int k = 10;
-    const int REPEAT = 20; // 每个算法重复20次取平均
-    string csv_file = "d:\\code\\Algorithm-Design-and-Analysis\\source\\data\\topk_benchmark.csv";
+    // 测试的k值列表
+    vector<int> k_list = {1,5,10,20,50,100,200,500,1000};
+    string csv_file = "d:\\code\\Algorithm-Design-and-Analysis\\source\\data\\k_topk.csv";  // CSV保存路径
 
     // 初始化CSV
     remove(csv_file.c_str());
@@ -190,14 +189,19 @@ int main() {
         fout << "algorithm,n,k,time_ms\n";
     }
 
-    for (int n : N_list) {
-        cout << "\n==== n = " << n << " ====" << endl;
-        auto users = generateUsers(n);
-        vector<double> target(DIM);
-        for (int i = 0; i < DIM; ++i)
-            target[i] = (double)rand() / RAND_MAX;
+    // 固定n=10000，仅生成一次数据（提升效率）
+    cout << "正在生成 " << FIXED_N << " 个用户向量..." << endl;
+    auto users = generateUsers(FIXED_N);
+    vector<double> target(DIM);
+    for (int i = 0; i < DIM; ++i)
+        target[i] = (double)rand() / RAND_MAX;
+    cout << "数据生成完成，开始测试多组k值..." << endl << endl;
 
-        // ==================== 1. 插入排序 Top-K ====================
+    // 遍历所有k值
+    for (int k : k_list) {
+        cout << "==== 测试 n=" << FIXED_N << ", k=" << k << " ====" << endl;
+
+        // 1. 插入排序 Top-K
         double t_insert = 0;
         for (int i = 0; i < REPEAT; ++i) {
             auto start = high_resolution_clock::now();
@@ -207,9 +211,9 @@ int main() {
         }
         t_insert /= REPEAT;
         cout << "InsertSort_TopK:   " << t_insert << " ms" << endl;
-        write_csv(csv_file, "InsertSort_TopK", n, k, t_insert);
+        write_csv(csv_file, "InsertSort_TopK", FIXED_N, k, t_insert);
 
-        // ==================== 2. 选择排序 Top-K ====================
+        // 2. 选择排序 Top-K
         double t_selection = 0;
         for (int i = 0; i < REPEAT; ++i) {
             auto start = high_resolution_clock::now();
@@ -219,9 +223,9 @@ int main() {
         }
         t_selection /= REPEAT;
         cout << "SelectionSort_TopK:" << t_selection << " ms" << endl;
-        write_csv(csv_file, "SelectionSort_TopK", n, k, t_selection);
+        write_csv(csv_file, "SelectionSort_TopK", FIXED_N, k, t_selection);
 
-        // ==================== 3. 冒泡排序 Top-K ====================
+        // 3. 冒泡排序 Top-K
         double t_bubble = 0;
         for (int i = 0; i < REPEAT; ++i) {
             auto start = high_resolution_clock::now();
@@ -231,9 +235,9 @@ int main() {
         }
         t_bubble /= REPEAT;
         cout << "BubbleSort_TopK:   " << t_bubble << " ms" << endl;
-        write_csv(csv_file, "BubbleSort_TopK", n, k, t_bubble);
+        write_csv(csv_file, "BubbleSort_TopK", FIXED_N, k, t_bubble);
 
-        // ==================== 4. QuickSelect Top-K ====================
+        // 4. QuickSelect Top-K
         double t_quick = 0;
         for (int i = 0; i < REPEAT; ++i) {
             auto start = high_resolution_clock::now();
@@ -243,9 +247,9 @@ int main() {
         }
         t_quick /= REPEAT;
         cout << "QuickSelect_TopK:  " << t_quick << " ms" << endl;
-        write_csv(csv_file, "QuickSelect_TopK", n, k, t_quick);
+        write_csv(csv_file, "QuickSelect_TopK", FIXED_N, k, t_quick);
 
-        // ==================== 5. 小顶堆 Top-K ====================
+        // 5. 小顶堆 Top-K
         double t_heap = 0;
         for (int i = 0; i < REPEAT; ++i) {
             auto start = high_resolution_clock::now();
@@ -255,7 +259,7 @@ int main() {
         }
         t_heap /= REPEAT;
         cout << "MinHeap_TopK:      " << t_heap << " ms" << endl;
-        write_csv(csv_file, "MinHeap_TopK", n, k, t_heap);
+        write_csv(csv_file, "MinHeap_TopK", FIXED_N, k, t_heap);
 
         cout << "-----------------------------------------" << endl;
     }
