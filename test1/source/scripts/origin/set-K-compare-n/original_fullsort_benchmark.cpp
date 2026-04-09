@@ -150,7 +150,7 @@ void write_csv(const string& fname, const string& algoname, int n, int k, double
 int main() {
     srand(time(0));
 
-    vector<int> N_list = {10000, 50000, 100000, 500000, 1000000, 5000000, 10000000};
+    vector<int> N_list = {1000000, 2000000, 3000000, 4000000, 5000000}; // 测试不同规模
     int k = 10;
     string csv_file = "d:\\code\\Algorithm-Design-and-Analysis\\source\\data\\original_Quicksort_benchmark.csv";
 
@@ -178,41 +178,41 @@ int main() {
         for (int i = 0; i < DIM; ++i)
             target[i] = (double)rand()/RAND_MAX;
 
-        // ==== 插入排序 ====
-        double ins_ms = 0;
-        for (int i = 0; i < REPEAT; ++i) {
-            auto t1 = high_resolution_clock::now();
-            origin_insertsort(users, target, k);
-            auto t2 = high_resolution_clock::now();
-            ins_ms += duration<double, milli>(t2 - t1).count();
-        }
-        ins_ms /= REPEAT;
-        cout << "Origin_InsertSort_Full: " << ins_ms << " ms\n";
-        write_csv(csv_file, "Origin_InsertSort_Full", n, k, ins_ms);
+        // // ==== 插入排序 ====
+        // double ins_ms = 0;
+        // for (int i = 0; i < REPEAT; ++i) {
+        //     auto t1 = high_resolution_clock::now();
+        //     origin_insertsort(users, target, k);
+        //     auto t2 = high_resolution_clock::now();
+        //     ins_ms += duration<double, milli>(t2 - t1).count();
+        // }
+        // ins_ms /= REPEAT;
+        // cout << "Origin_InsertSort_Full: " << ins_ms << " ms\n";
+        // write_csv(csv_file, "Origin_InsertSort_Full", n, k, ins_ms);
 
-        // ==== 冒泡排序 ====
-        double bub_ms = 0;
-        for (int i = 0; i < REPEAT; ++i) {
-            auto t1 = high_resolution_clock::now();
-            origin_bubblesort(users, target, k);
-            auto t2 = high_resolution_clock::now();
-            bub_ms += duration<double, milli>(t2 - t1).count();
-        }
-        bub_ms /= REPEAT;
-        cout << "Origin_BubbleSort_Full: " << bub_ms << " ms\n";
-        write_csv(csv_file, "Origin_BubbleSort_Full", n, k, bub_ms);
+        // // ==== 冒泡排序 ====
+        // double bub_ms = 0;
+        // for (int i = 0; i < REPEAT; ++i) {
+        //     auto t1 = high_resolution_clock::now();
+        //     origin_bubblesort(users, target, k);
+        //     auto t2 = high_resolution_clock::now();
+        //     bub_ms += duration<double, milli>(t2 - t1).count();
+        // }
+        // bub_ms /= REPEAT;
+        // cout << "Origin_BubbleSort_Full: " << bub_ms << " ms\n";
+        // write_csv(csv_file, "Origin_BubbleSort_Full", n, k, bub_ms);
 
-        // ==== 选择排序 ====
-        double sel_ms = 0;
-        for (int i = 0; i < REPEAT; ++i) {
-            auto t1 = high_resolution_clock::now();
-            origin_selectionsort(users, target, k);
-            auto t2 = high_resolution_clock::now();
-            sel_ms += duration<double, milli>(t2 - t1).count();
-        }
-        sel_ms /= REPEAT;
-        cout << "Origin_SelectionSort_Full: " << sel_ms << " ms\n";
-        write_csv(csv_file, "Origin_SelectionSort_Full", n, k, sel_ms);
+        // // ==== 选择排序 ====
+        // double sel_ms = 0;
+        // for (int i = 0; i < REPEAT; ++i) {
+        //     auto t1 = high_resolution_clock::now();
+        //     origin_selectionsort(users, target, k);
+        //     auto t2 = high_resolution_clock::now();
+        //     sel_ms += duration<double, milli>(t2 - t1).count();
+        // }
+        // sel_ms /= REPEAT;
+        // cout << "Origin_SelectionSort_Full: " << sel_ms << " ms\n";
+        // write_csv(csv_file, "Origin_SelectionSort_Full", n, k, sel_ms);
 
         // ==== 快速排序 ====
         double qk_ms = 0;
