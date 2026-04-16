@@ -1,0 +1,11 @@
+algorithm,n,time_ms
+DivideConquer,100000,26.8367
+DivideConquer,200000,55.5459
+DivideConquer,300000,90.1867
+DivideConquer,400000,116.241
+DivideConquer,500000,149.182
+DivideConquer,600000,180.359
+DivideConquer,700000,202.233
+DivideConquer,800000,226.875
+DivideConquer,900000,260.513
+DivideConquer,1000000,296.285
